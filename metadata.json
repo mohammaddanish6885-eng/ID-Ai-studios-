@@ -1,0 +1,6 @@
+{
+  "name": "FrameCraft",
+  "description": "AI-powered video and image editing studio for generating and transforming visual stories from simple text prompts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

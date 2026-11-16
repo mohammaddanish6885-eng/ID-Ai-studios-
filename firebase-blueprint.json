@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "StudioProject": {
+      "title": "StudioProject",
+      "description": "An AI-generated or AI-edited video reel or image project owned by an authenticated user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the project owner."
+        },
+        "title": {
+          "type": "string",
+          "description": "Project display title."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Primary text prompt used to generate or direct the project."
+        },
+        "mediaType": {
+          "type": "string",
+          "enum": ["IMAGE", "VIDEO"],
+          "description": "Whether this project is a single image edit or multi-scene AI video reel."
+        },
+        "aspectRatio": {
+          "type": "string",
+          "enum": ["1:1", "16:9", "9:16", "4:3", "3:4"],
+          "description": "Target canvas aspect ratio."
+        },
+        "stylePreset": {
+          "type": "string",
+          "description": "Visual style preset applied during generation."
+        },
+        "colorGrade": {
+          "type": "string",
+          "description": "Non-destructive LUT / color grade preset."
+        },
+        "exposure": {
+          "type": "number",
+          "description": "Exposure adjustment from -1.0 to 1.0."
+        },
+        "contrast": {
+          "type": "number",
+          "description": "Contrast multiplier from 0.5 to 2.0."
+        },
+        "saturation": {
+          "type": "number",
+          "description": "Saturation multiplier from 0.0 to 2.0."
+        },
+        "warmth": {
+          "type": "number",
+          "description": "Color temperature warmth from -1.0 to 1.0."
+        },
+        "overlayText": {
+          "type": "string",
+          "description": "Optional title or caption overlay."
+        },
+        "localMediaPath": {
+          "type": "string",
+          "description": "Device-local file path for the rendered image or exported MP4 video."
+        },
+        "scenes": {
+          "type": "array",
+          "description": "Ordered storyboard scenes for AI video projects (max 8 scenes)."
+        },
+        "editHistory": {
+          "type": "array",
+          "description": "Recent prompt edit instructions applied to the project (max 20 entries)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp() on creation and updates."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "prompt",
+        "mediaType",
+        "aspectRatio",
+        "stylePreset",
+        "colorGrade",
+        "exposure",
+        "contrast",
+        "saturation",
+        "warmth",
+        "overlayText",
+        "localMediaPath",
+        "scenes",
+        "editHistory",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/StudioProject"
+      },
+      "description": "User-owned AI image and video editing projects."
+    }
+  }
+}

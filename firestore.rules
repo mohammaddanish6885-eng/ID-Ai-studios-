@@ -1,0 +1,91 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidStudioProject(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 120 &&
+             data.prompt is string && data.prompt.size() >= 1 && data.prompt.size() <= 1200 &&
+             data.mediaType in ['IMAGE', 'VIDEO'] &&
+             data.aspectRatio in ['1:1', '16:9', '9:16', '4:3', '3:4'] &&
+             data.stylePreset is string && data.stylePreset.size() >= 1 && data.stylePreset.size() <= 64 &&
+             data.colorGrade is string && data.colorGrade.size() >= 1 && data.colorGrade.size() <= 64 &&
+             data.exposure is number && data.exposure >= -1.0 && data.exposure <= 1.0 &&
+             data.contrast is number && data.contrast >= 0.5 && data.contrast <= 2.0 &&
+             data.saturation is number && data.saturation >= 0.0 && data.saturation <= 2.0 &&
+             data.warmth is number && data.warmth >= -1.0 && data.warmth <= 1.0 &&
+             data.overlayText is string && data.overlayText.size() <= 200 &&
+             data.localMediaPath is string && data.localMediaPath.size() <= 500 &&
+             data.scenes is list && data.scenes.size() <= 8 &&
+             (data.scenes.size() == 0 || data.scenes[0] is map) &&
+             data.editHistory is list && data.editHistory.size() <= 20 &&
+             (data.editHistory.size() == 0 || data.editHistory[0] is string);
+    }
+
+    match /users/{userId}/projects/{projectId} {
+      allow list: if isSignedIn() && request.auth.uid == userId;
+
+      allow get, delete: if isSignedIn() &&
+                           request.auth.uid == userId &&
+                           isValidId(projectId);
+
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(projectId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll([
+                         'userId', 'title', 'prompt', 'mediaType', 'aspectRatio',
+                         'stylePreset', 'colorGrade', 'exposure', 'contrast',
+                         'saturation', 'warmth', 'overlayText', 'localMediaPath',
+                         'scenes', 'editHistory', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'title', 'prompt', 'mediaType', 'aspectRatio',
+                         'stylePreset', 'colorGrade', 'exposure', 'contrast',
+                         'saturation', 'warmth', 'overlayText', 'localMediaPath',
+                         'scenes', 'editHistory', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       incoming().updatedAt is timestamp &&
+                       incoming().updatedAt <= request.time &&
+                       isValidStudioProject(incoming());
+
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(projectId) &&
+                       isValidStudioProject(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().mediaType == existing().mediaType &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().updatedAt is timestamp &&
+                       incoming().updatedAt <= request.time &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'title', 'prompt', 'aspectRatio', 'stylePreset', 'colorGrade',
+                         'exposure', 'contrast', 'saturation', 'warmth', 'overlayText',
+                         'localMediaPath', 'scenes', 'editHistory', 'updatedAt'
+                       ]);
+    }
+  }
+}
