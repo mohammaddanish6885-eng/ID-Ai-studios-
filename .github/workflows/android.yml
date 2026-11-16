@@ -25,7 +25,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Gradle 9.3.1
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.1'
@@ -51,6 +51,13 @@ jobs:
               -validity 10000 \
               -dname "CN=Android Debug,O=Android,C=US"
           fi
+
+      - name: Get SHA-1 Fingerprint
+        run: |
+          keytool -list -v \
+            -keystore debug.keystore \
+            -storepass android \
+            -alias androiddebugkey
 
       - name: Build Debug APK
         run: gradle assembleDebug
