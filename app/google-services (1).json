@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "572730408323",
+    "project_id": "framecraft-ai-1878f",
+    "storage_bucket": "framecraft-ai-1878f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572730408323:android:da1c79fe21040ccd310ab6",
+        "android_client_info": {
+          "package_name": "com.aistudio.framecraft.vqmtxz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572730408323-8iit8fkkuo99eu5itq5d62r7ga0tmnv6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ0-Ui-JrCJ62sOqMjDVVl9sUWRcSoJeQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572730408323-8iit8fkkuo99eu5itq5d62r7ga0tmnv6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
